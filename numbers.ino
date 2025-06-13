@@ -3,8 +3,7 @@ const int dataPin = 2;   // DS
 const int clockPin = 3;  // SH_CP
 const int latchPin = 4;  // ST_CP
 
-// Кнопки
-const int startButtonPin = 5;
+// Кнопка
 const int stopButtonPin = 6;
 
 // Timer variables
@@ -18,8 +17,8 @@ int digits[4] = {0, 0, 0, 0};
 unsigned long lastDisplayUpdate = 0;
 const unsigned long displayUpdateInterval = 10; // Update every 10ms for smooth display
 
-// Debounce variables
-unsigned long lastStartButtonTime = 0;
+// Button state and debounce variables
+int buttonState = 0; // 0=start, 1=stop, 2=reset
 unsigned long lastStopButtonTime = 0;
 const unsigned long debounceDelay = 200;
 
@@ -75,7 +74,6 @@ void setup() {
   pinMode(clockPin, OUTPUT);
   pinMode(latchPin, OUTPUT);
 
-  pinMode(startButtonPin, INPUT_PULLUP);
   pinMode(stopButtonPin, INPUT_PULLUP);
 
   // Initialize display to blank immediately to avoid random patterns
@@ -166,25 +164,22 @@ void resetTimer() {
 void loop() {
   unsigned long currentTime = millis();
 
-  // Handle start button
-  if (digitalRead(startButtonPin) == LOW) {
-    unsigned long startElapsed = currentTime - lastStartButtonTime;
-    if (startElapsed > debounceDelay) {
-      if (!timerRunning) {
-        startTimer();
-      } else {
-        resetTimer();
-      }
-      lastStartButtonTime = currentTime;
-    }
-  }
-
-  // Handle stop button
+  // Handle single button cycling through states
   if (digitalRead(stopButtonPin) == LOW) {
     unsigned long stopElapsed = currentTime - lastStopButtonTime;
     if (stopElapsed > debounceDelay) {
-      if (timerRunning) {
+      if (buttonState == 0) {
+        startTimer();
+        buttonState = 1;
+        Serial.println("State: START -> STOP");
+      } else if (buttonState == 1) {
         stopTimer();
+        buttonState = 2;
+        Serial.println("State: STOP -> RESET");
+      } else if (buttonState == 2) {
+        resetTimer();
+        buttonState = 0;
+        Serial.println("State: RESET -> START");
       }
       lastStopButtonTime = currentTime;
     }
