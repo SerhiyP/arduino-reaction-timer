@@ -94,10 +94,10 @@ void setup() {
 
 void displayTimeDigits(int tens, int units, int decimal1, int decimal2) {
   digitalWrite(latchPin, LOW);
-  shiftOut(dataPin, clockPin, MSBFIRST, numberTable[decimal2]);
-  shiftOut(dataPin, clockPin, MSBFIRST, numberTable[decimal1]);
-  shiftOut(dataPin, clockPin, MSBFIRST, numberTableWithDP[units]);
   shiftOut(dataPin, clockPin, MSBFIRST, numberTable[tens]);
+  shiftOut(dataPin, clockPin, MSBFIRST, numberTableWithDP[units]);
+  shiftOut(dataPin, clockPin, MSBFIRST, numberTable[decimal1]);
+  shiftOut(dataPin, clockPin, MSBFIRST, numberTable[decimal2]);
   digitalWrite(latchPin, HIGH);
 }
 
