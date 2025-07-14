@@ -36,19 +36,6 @@ const byte numberTable[10] = {
   0b01101111  // 9
 };
 
-// Таблиця сегментів з десятковою крапкою (A-G + DP)
-const byte numberTableWithDP[10] = {
-  0b10111111, // 0.
-  0b10000110, // 1.
-  0b11011011, // 2.
-  0b11001111, // 3.
-  0b11100110, // 4.
-  0b11101101, // 5.
-  0b11111101, // 6.
-  0b10000111, // 7.
-  0b11111111, // 8.
-  0b11101111  // 9.
-};
 
 void displayNumber(int d1, int d2, int d3, int d4) {
   digitalWrite(latchPin, LOW);
@@ -88,14 +75,14 @@ void setup() {
   // Wait for serial to be ready
   delay(1000);
 
-  // Display ready pattern - show 00.00
+  // Display ready pattern - show 0000
   displayTimeDigits(0, 0, 0, 0);
 }
 
 void displayTimeDigits(int tens, int units, int decimal1, int decimal2) {
   digitalWrite(latchPin, LOW);
   shiftOut(dataPin, clockPin, MSBFIRST, numberTable[tens]);
-  shiftOut(dataPin, clockPin, MSBFIRST, numberTableWithDP[units]);
+  shiftOut(dataPin, clockPin, MSBFIRST, numberTable[units]);
   shiftOut(dataPin, clockPin, MSBFIRST, numberTable[decimal1]);
   shiftOut(dataPin, clockPin, MSBFIRST, numberTable[decimal2]);
   digitalWrite(latchPin, HIGH);
