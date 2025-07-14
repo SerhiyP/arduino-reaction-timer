@@ -21,6 +21,8 @@ const unsigned long displayUpdateInterval = 10; // Update every 10ms for smooth 
 int buttonState = 0; // 0=start, 1=stop, 2=reset
 unsigned long lastStopButtonTime = 0;
 const unsigned long debounceDelay = 200;
+bool lastButtonReading = HIGH;
+bool buttonPressed = false;
 
 // Таблиця сегментів (A-G, без DP)
 const byte numberTable[10] = {
@@ -151,8 +153,11 @@ void resetTimer() {
 void loop() {
   unsigned long currentTime = millis();
 
-  // Handle single button cycling through states
-  if (digitalRead(stopButtonPin) == LOW) {
+  // Handle single button cycling through states with edge detection
+  bool currentButtonReading = digitalRead(stopButtonPin);
+  
+  // Detect button press (HIGH to LOW transition)
+  if (lastButtonReading == HIGH && currentButtonReading == LOW && !buttonPressed) {
     unsigned long stopElapsed = currentTime - lastStopButtonTime;
     if (stopElapsed > debounceDelay) {
       if (buttonState == 0) {
@@ -169,8 +174,16 @@ void loop() {
         Serial.println("State: RESET -> START");
       }
       lastStopButtonTime = currentTime;
+      buttonPressed = true;
     }
   }
+  
+  // Reset button pressed flag when button is released
+  if (currentButtonReading == HIGH) {
+    buttonPressed = false;
+  }
+  
+  lastButtonReading = currentButtonReading;
 
   // Update display every 10ms for smooth animation
   if (currentTime - lastDisplayUpdate >= displayUpdateInterval) {
