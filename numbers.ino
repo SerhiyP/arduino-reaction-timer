@@ -20,7 +20,7 @@ const unsigned long displayUpdateInterval = 10; // Update every 10ms for smooth 
 // Button state and debounce variables
 int buttonState = 0; // 0=start, 1=stop, 2=reset
 unsigned long lastStopButtonTime = 0;
-const unsigned long debounceDelay = 30;
+const unsigned long debounceDelay = 180;
 bool lastButtonReading = HIGH;
 bool buttonPressed = false;
 
@@ -155,7 +155,7 @@ void loop() {
 
   // Handle single button cycling through states with edge detection
   bool currentButtonReading = digitalRead(stopButtonPin);
-  
+
   // Detect button press (HIGH to LOW transition)
   if (lastButtonReading == HIGH && currentButtonReading == LOW && !buttonPressed) {
     unsigned long stopElapsed = currentTime - lastStopButtonTime;
@@ -177,12 +177,12 @@ void loop() {
       buttonPressed = true;
     }
   }
-  
+
   // Reset button pressed flag when button is released
   if (currentButtonReading == HIGH) {
     buttonPressed = false;
   }
-  
+
   lastButtonReading = currentButtonReading;
 
   // Update display every 10ms for smooth animation
