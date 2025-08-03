@@ -20,7 +20,7 @@ const unsigned long displayUpdateInterval = 10; // Update every 10ms for smooth 
 // Button state and debounce variables
 int buttonState = 0; // 0=start, 1=stop, 2=reset
 unsigned long lastStopButtonTime = 0;
-const unsigned long debounceDelay = 200;
+const unsigned long debounceDelay = 30;
 bool lastButtonReading = HIGH;
 bool buttonPressed = false;
 
